@@ -8,19 +8,11 @@ const app = express();
 // Make the static files inside of the `public/` folder publicly accessible
 app.use(express.static('public'));
 
-// JSON middleware to parse incoming HTTP requests that contain JSON
-// (Configure Express to be able to read incoming HTTP request that contain JSON data in the body.)
+// Configure Express to be able to read incoming HTTP request that contain JSON data in the body.
 app.use(express.json());
 
 
 
-/*
-app.get(path, (req, res, next) => {
-    res.send("hello world");
-    res.sendFile();
-    res.json();
-})
-*/
 
 
 
@@ -61,6 +53,29 @@ app.get("/pizzas", (req, res, next) => {
     res.json(pizzasArr);
 });
 
+
+// Example of req.body
+app.post("/drinks", (req, res, next) => {
+    const {name, price} = req.body;
+    res.json({"message": `this will create a new drink with name.... ${name}`})
+})
+
+
+// Example of Query String (req.query)
+app.get("/drinks", (req, res, next) => {
+
+    const {maxPrice} = req.query;
+
+    res.json({"message": `this will be the list of drinks with max price... ${maxPrice}`});
+})
+
+
+
+// Example of URL params (req.params)
+app.get("/drinks/:drinkName", (req, res, next) => {
+    const {drinkName} = req.params;
+    res.json({"message": `this will be the details for the drink... ${drinkName}`});
+})
 
 
 
