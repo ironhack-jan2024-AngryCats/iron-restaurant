@@ -39,6 +39,7 @@ app.get("/contact", (req, res, next) => {
 })
 
 
+
 // POST /pizzas
 app.post("/pizzas", (req, res, next) => {
 
@@ -64,39 +65,29 @@ app.get("/pizzas", (req, res, next) => {
             res.json(pizzasFromDB);
         })
         .catch( (e) => {
-            console.log("Error getting pizza details");
+            console.log("Error getting list of pizzas");
             console.log(e)
-            res.status(500).json({message: "Error getting pizza details"})
+            res.status(500).json({message: "Error getting list of pizzas"})
         });
 });
 
 
 
+// GET /pizzas/:pizzaTitle 
+app.get("/pizzas/:pizzaTitle", (req, res, next) => {
+    const {pizzaTitle} = req.params;
 
-
-
-// Example of req.body
-app.post("/drinks", (req, res, next) => {
-    const {name, price} = req.body;
-    res.json({"message": `this will create a new drink with name.... ${name}`})
+    Pizza.findOne({title: pizzaTitle})
+        .then( (pizzaDetails) => {
+            res.json(pizzaDetails);
+        })
+        .catch( (e) => {
+            console.log("Error getting pizza details");
+            console.log(e)
+            res.status(500).json({message: "Error getting pizza details"})
+        });
 })
 
-
-// Example of Query String (req.query)
-app.get("/drinks", (req, res, next) => {
-
-    const {maxPrice} = req.query;
-
-    res.json({"message": `this will be the list of drinks with max price... ${maxPrice}`});
-})
-
-
-
-// Example of URL params (req.params)
-app.get("/drinks/:drinkName", (req, res, next) => {
-    const {drinkName} = req.params;
-    res.json({"message": `this will be the details for the drink... ${drinkName}`});
-})
 
 
 
