@@ -1,5 +1,7 @@
-// First, we have to require Express so we can use it in our app.
 const express = require('express');
+const mongoose = require("mongoose");
+
+const Pizza = require("./models/Pizza.model");
  
 // Create an express server instance named `app`
 // `app` is the Express server that will be handling requests and responses
@@ -12,6 +14,13 @@ app.use(express.static('public'));
 app.use(express.json());
 
 
+// Connect to DB
+mongoose
+    .connect("mongodb://127.0.0.1:27017/iron-restaurant")
+    .then((response) => {
+        console.log(`Connected! Database Name: "${response.connections[0].name}"`);
+    })
+    .catch((err) => console.error("Error connecting to Mongo", err));
 
 
 
@@ -30,28 +39,40 @@ app.get("/contact", (req, res, next) => {
 })
 
 
+// POST /pizzas
+app.post("/pizzas", (req, res, next) => {
+
+    const {title, price} = req.body;
+
+    Pizza.create({title, price})
+        .then( (pizzaFromDB) => {
+            res.json(pizzaFromDB)
+        })
+        .catch( (e) => {
+            console.log("Error creating a new pizza");
+            console.log(e)
+            res.status(500).json({message: "Error creating a new pizza"})
+        });
+});
+
+
+
 // GET /pizzas
 app.get("/pizzas", (req, res, next) => {
-
-    const pizzasArr = [
-        {
-            title: 'Pizza Margarita',
-            price: 12,
-            imageFile: 'pizza-margarita.jpg',
-        },
-        {
-            title: "Veggie Pizza",
-            price: 15,
-            imageFile: "pizza-veggie.jpg"
-        },
-        {
-            title: "Seafood Pizza",
-            imageFile: "pizza-seafood.jpg"
-        }
-    ];
-
-    res.json(pizzasArr);
+    Pizza.find()
+        .then( (pizzasFromDB) => {
+            res.json(pizzasFromDB);
+        })
+        .catch( (e) => {
+            console.log("Error getting pizza details");
+            console.log(e)
+            res.status(500).json({message: "Error getting pizza details"})
+        });
 });
+
+
+
+
 
 
 // Example of req.body
